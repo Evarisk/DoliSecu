@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2022 SuperAdmin
+/* Copyright (C) 2022 EVARISK <dev@evarisk.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  */
 
 /**
- * \file    dolisecu/lib/dolisecu.lib.php
+ * \file    lib/dolisecu.lib.php
  * \ingroup dolisecu
  * \brief   Library files with common functions for DoliSecu
  */
@@ -26,43 +26,26 @@
  *
  * @return array
  */
-function dolisecuAdminPrepareHead()
+function dolisecuAdminPrepareHead(): array
 {
 	global $langs, $conf;
 
-	$langs->load("dolisecu@dolisecu");
+	$langs->load('dolisecu@dolisecu');
 
 	$h = 0;
-	$head = array();
+	$head = [];
 
-	$head[$h][0] = dol_buildpath("/dolisecu/admin/setup.php", 1);
-	$head[$h][1] = $langs->trans("Settings");
-	$head[$h][2] = 'settings';
-	$h++;
+    $head[$h][0] = dol_buildpath('/dolisecu/admin/setup.php', 1);
+    $head[$h][1] = '<i class="fas fa-cog pictofixedwidth"></i>' . $langs->trans('Settings');
+    $head[$h][2] = 'settings';
+    $h++;
 
-	/*
-	$head[$h][0] = dol_buildpath("/dolisecu/admin/myobject_extrafields.php", 1);
-	$head[$h][1] = $langs->trans("ExtraFields");
-	$head[$h][2] = 'myobject_extrafields';
-	$h++;
-	*/
+    $head[$h][0] = dol_buildpath('/dolisecu/admin/about.php', 1);
+    $head[$h][1] = '<i class="fab fa-readme pictofixedwidth"></i>' . $langs->trans('About');
+    $head[$h][2] = 'about';
+    $h++;
 
-	$head[$h][0] = dol_buildpath("/dolisecu/admin/about.php", 1);
-	$head[$h][1] = $langs->trans("About");
-	$head[$h][2] = 'about';
-	$h++;
-
-	// Show more tabs from modules
-	// Entries must be declared in modules descriptor with line
-	//$this->tabs = array(
-	//	'entity:+tabname:Title:@dolisecu:/dolisecu/mypage.php?id=__ID__'
-	//); // to add new tab
-	//$this->tabs = array(
-	//	'entity:-tabname:Title:@dolisecu:/dolisecu/mypage.php?id=__ID__'
-	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'dolisecu@dolisecu');
-
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'dolisecu@dolisecu', 'remove');
 
 	return $head;
 }

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2022 EOXIA <dev@eoxia.com>
+/* Copyright (C) 2022 EVARISK <dev@evarisk.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  */
 
 /**
- *	\file       dolisecu/dolisecuindex.php
+ *	\file       dolisecuindex.php
  *	\ingroup    dolisecu
  *	\brief      Home page of dolisecu top menu
  */
@@ -52,47 +52,25 @@ if (!$res) {
 	die('Include of main fails');
 }
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+// Libraries
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 
+// Global variables definitions
+global $db, $langs, $user;
 
 // Load translation files required by the page
-$langs->loadLangs(array('dolisecu@dolisecu'));
-$langs->loadLangs(array('admin', 'errors'));
+$langs->loadLangs(['dolisecu@dolisecu', 'admin', 'errors']);
 
+// Get parameters
 $action = GETPOST('action', 'aZ09');
 
+$perms       = fileperms($dolibarr_main_document_root . '/' .$conffile);
+$installlock = DOL_DATA_ROOT.'/install.lock';
 
 // Security check
-// if (! $user->rights->dolisecu->myobject->read) {
-// 	accessforbidden();
-// }
-$socid = GETPOST('socid', 'int');
-if (isset($user->socid) && $user->socid > 0) {
-	$action = '';
-	$socid = $user->socid;
-}
-
-// Parameters
-
-$max            = 5;
-$now            = dol_now();
-$repair_conf    = false;
-$repair_install = false;
-
-$action         = GETPOST('action', 'alpha');
-$backtopage     = GETPOST('backtopage', 'alpha');
-
-$error          = 0;
-
-$perms 			= fileperms($dolibarr_main_document_root.'/'.$conffile);
-$installlock    = DOL_DATA_ROOT.'/install.lock';
+$permissiontoread = $user->rights->dolisecu->lire;
+if (empty($conf->dolisecu->enabled)) accessforbidden();
+if (!$permissiontoread) accessforbidden();
 
 /*
  *  Actions
@@ -105,70 +83,67 @@ if (($perms & 0x0004) || ($perms & 0x0002) || !file_exists($installlock)) {
 
 if ($action == 'check') {
 	if (($perms & 0x0004) || ($perms & 0x0002)) {
-		$test = chmod($dolibarr_main_document_root.'/'.$conffile, 0444);
+		chmod($dolibarr_main_document_root . '/' . $conffile, 0444);
 		setEventMessage($langs->trans('ConfFileSetPermissions'));
 	}
 	if (!file_exists($installlock)) {
-		fopen(DOL_DATA_ROOT. '/install.lock', 'w');
+		fopen(DOL_DATA_ROOT . '/install.lock', 'w');
 		setEventMessage($langs->trans('InstallLockFileCreated'));
 	}
-	header('Location: ' . $_SERVER['PHP_SELF']);
+    header('Location: ' . $_SERVER['PHP_SELF']);
+    exit;
 }
 
 /*
  * View
  */
 
-$form = new Form($db);
-$formfile = new FormFile($db);
+$help_url = 'FR:Module_DoliSecu';
+$title    = $langs->trans('DoliSecuArea');
 
-llxHeader('', $langs->trans('ModuleDoliSecuName'));
+llxHeader('', $title, $help_url);
 
-print load_fiche_titre($langs->trans('ModuleDoliSecuName'), '', 'dolisecu.png@dolisecu');
+print load_fiche_titre($title, '', 'dolisecu_color.png@dolisecu');
 
-print '<a class="' . ($need_repair == 1 ? 'butAction' : 'butActionRefused classfortooltip') . '" id="actionButtonCheck" title="' . ($need_repair == 1 ? '' : dol_escape_htmltag($langs->trans('NoSecurityProblem'))) . '" href="' . ($need_repair == 1 ? ($_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=check') : '#') . '">' . $langs->trans('Repair') . ' ' . $langs->trans('SecurityProblem') . '</a>';
-
-print '<br>';
-print '<br>';
+print load_fiche_titre($langs->trans('SecurityProblem'), '', '');
 
 // $conffile is defined into filefunc.inc.php
-print '<strong>'.$langs->trans('PermissionsOnFile', $conffile).'</strong>: ';
+print '<strong>' . $langs->trans('PermissionsOnFile', $conffile) . '</strong> : ';
 if ($perms) {
 	if (($perms & 0x0004) || ($perms & 0x0002)) {
-		print img_warning().' '.$langs->trans('ConfFileIsReadableOrWritableByAnyUsers');
+		print img_warning() . ' ' .$langs->trans('ConfFileIsReadableOrWritableByAnyUsers');
 		// Web user group by default
 		$labeluser = dol_getwebuser('user');
 		$labelgroup = dol_getwebuser('group');
-		print ' '.$langs->trans('User').': '.$labeluser.':'.$labelgroup;
+		print ' ' . $langs->trans('User') . ' : ' . $labeluser . ' : ' . $labelgroup;
 		if (function_exists('posix_geteuid') && function_exists('posix_getpwuid')) {
 			$arrayofinfoofuser = posix_getpwuid(posix_geteuid());
-			print ' <span class="opacitymedium">(POSIX '.$arrayofinfoofuser['name'].':'.$arrayofinfoofuser['gecos'].':'.$arrayofinfoofuser['dir'].':'.$arrayofinfoofuser['shell'].')</span>';
+			print ' <span class="opacitymedium">(POSIX ' . $arrayofinfoofuser['name'] . ' : ' . $arrayofinfoofuser['gecos'] . ' : ' . $arrayofinfoofuser['dir'] . ' : ' . $arrayofinfoofuser['shell'] . ')</span>';
 		}
 	} else {
-		print img_picto('', 'tick').' '.$langs->trans('ConfFileHasGoodPermissions');
+		print img_picto('', 'tick') . ' ' . $langs->trans('ConfFileHasGoodPermissions');
 	}
 } else {
-	print img_warning().' '.$langs->trans('FailedToReadFile', $conffile);
+	print img_warning() . ' ' . $langs->trans('FailedToReadFile', $conffile);
 }
-print '<br>';
-print '<br>';
 
-print '<strong>'.$langs->trans('DolibarrSetup').'</strong>: ';
+print '<br><br>';
+
+print '<strong>' . $langs->trans('DolibarrSetup') . '</strong> : ';
 if (file_exists($installlock)) {
-	print img_picto('', 'tick').' '.$langs->trans('InstallAndUpgradeLockedBy', $installlock);
+	print img_picto('', 'tick') . ' ' . $langs->trans('InstallAndUpgradeLockedBy', $installlock);
 } else {
-	print img_warning().' '.$langs->trans('WarningLockFileDoesNotExists', DOL_DATA_ROOT);
+	print img_warning() . ' ' . $langs->trans('WarningLockFileDoesNotExists', DOL_DATA_ROOT);
 }
-print '<br>';
 
-print '<div class="fichecenter"><div class="fichethirdleft">';
-print '</div><div class="fichetwothirdright">';
-
-
-$NBMAX = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
-$max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
-
-print '</div></div>';
+print '<div class="tabsAction">';
+// Repair security problem
+if ($need_repair) {
+    print '<a class="butAction" id="actionButtonCheck" href="' . $_SERVER['PHP_SELF'] . '?action=check' . '">' . $langs->trans('RepairSecurityProblem') . '</a>';
+} else {
+    print '<span class="butActionRefused classfortooltip" title="' . dol_escape_htmltag($langs->trans('NoSecurityProblem')) . '">' . $langs->trans('RepairSecurityProblem') . '</span>';
+}
+print '</div>';
 
 // End of page
 llxFooter();

@@ -81,7 +81,7 @@ class modDoliSecu extends DolibarrModules
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
 		// To use a supported fa-xxx css style of font awesome, use this->picto='xxx'
-		$this->picto = 'dolisecu@dolisecu';
+		$this->picto = 'dolisecu_color@dolisecu';
 
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = [
@@ -158,7 +158,8 @@ class modDoliSecu extends DolibarrModules
 		// Permissions provided by this module
 		$this->rights = [];
 		$r = 0;
-		// Add here entries to declare new permissions
+
+        /* DOLISECU PERMISSIONS */
         $this->rights[$r][0] = $this->numero . sprintf('%02d', $r + 1);
         $this->rights[$r][1] = $langs->trans('LireDoliSecu');
         $this->rights[$r][4] = 'lire';
@@ -168,15 +169,22 @@ class modDoliSecu extends DolibarrModules
         $this->rights[$r][1] = $langs->trans('ReadDoliSecu');
         $this->rights[$r][4] = 'read';
         $this->rights[$r][5] = 1;
+        $r++;
+
+        /* ADMINPAGE PANEL ACCESS PERMISSIONS */
+        $this->rights[$r][0] = $this->numero . sprintf('%02d', $r + 1);
+        $this->rights[$r][1] = $langs->trans('ReadAdminPage');
+        $this->rights[$r][4] = 'adminpage';
+        $this->rights[$r][5] = 'read';
 
 		// Main menu entries to add
 		$this->menu = [];
 		$r = 0;
 		$this->menu[$r++] = [
-			'fk_menu'  => '', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'fk_menu'  => 'fk_mainmenu=dolisecu', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'     => 'top', // This is a Top menu entry
 			'titre'    => $langs->trans('DoliSecu'),
-			'prefix'   => img_picto('', $this->picto, 'class="paddingright pictofixedwidth valignmiddle"'),
+			'prefix'   => '<i class="fas fa-home pictofixedwidth"></i>',
 			'mainmenu' => 'dolisecu',
 			'leftmenu' => '',
 			'url'      => '/dolisecu/dolisecuindex.php',
