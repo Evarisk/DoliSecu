@@ -94,28 +94,34 @@ if ($action == 'check') {
     exit;
 }
 
-if ($action == 'set_prod') {
+if ($action == 'toggle_prod') {
+	// Retrieve content of conf.php
+	$confContent = file_get_contents($confPath);
+	// Search for line $dolibarr_main_prod
+	$pattern     = '/\$dolibarr_main_prod\s*=\s*\'?\d+\'?\s*;/';
+
 	if ($dolibarr_main_prod == 0) {
-
-		// Retrieve content of conf.php
-		$confContent       = file_get_contents($confPath);
-		// Search for line $dolibarr_main_prod and set it to 1
-		$pattern           = '/\$dolibarr_main_prod\s*=\s*\'?\d+\'?\s*;/';
-		$replacement       = '$dolibarr_main_prod = 1;';
-		// Replace content of conf.php with good value
-		$updateConfContent = preg_replace($pattern, $replacement, $confContent);
-
-		// Change perms to update file content
-		chmod($confPath, 0666);
-		$result = file_put_contents($confPath, $updateConfContent);
-		chmod($confPath, 0440);
-
-		if ($result > 0) {
-			setEventMessage($langs->trans('SuccessfullySetToProd'));
-		} else {
-			setEventMessages($langs->trans('CouldNotSetToProd'), [], 'errors');
-		}
+		$replacement = '$dolibarr_main_prod = 1;';
+	} else {
+		$replacement = '$dolibarr_main_prod = 0;';
 	}
+
+	// Replace content of conf.php with good value
+	$updateConfContent = preg_replace($pattern, $replacement, $confContent);
+
+	// Change perms to update file content
+	chmod($confPath, 0666);
+	$result = file_put_contents($confPath, $updateConfContent);
+	chmod($confPath, 0440);
+
+	if ($result > 0) {
+		setEventMessage($langs->trans('SuccessfullyChangeProdMod'));
+	} else {
+		setEventMessages($langs->trans('CouldNotSetProd'), [], 'errors');
+	}
+
+	header('Location:' . $_SERVER['PHP_SELF']);
+	exit;
 }
 
 /*
@@ -180,9 +186,9 @@ if (empty($dolibarr_main_prod)) {
 print '<div class="tabsAction">';
 // Repair security problem
 if ($dolibarr_main_prod == 0) {
-	print '<a class="butAction" id="actionButtonCheck" href="' . $_SERVER['PHP_SELF'] . '?action=set_prod&token=' . newToken() . '">' . $langs->trans('SetMyDolibarrInProd') . '</a>';
+	print '<a class="butAction" id="actionButtonCheck" href="' . $_SERVER['PHP_SELF'] . '?action=toggle_prod&token=' . newToken() . '">' . $langs->trans('SetMyDolibarrInProd') . '</a>';
 } else {
-	print '<span class="butActionRefused classfortooltip" title="' . dol_escape_htmltag($langs->trans('NoSecurityProblem')) . '">' . $langs->trans('MyDolibarrIsInProd') . '</span>';
+	print '<a class="butAction" id="actionButtonCheck" href="' . $_SERVER['PHP_SELF'] . '?action=toggle_prod&token=' . newToken() . '">' . $langs->trans('SetMyDolibarrInDraft') . '</a>';
 }
 print '</div>';
 
