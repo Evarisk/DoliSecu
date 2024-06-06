@@ -76,6 +76,7 @@ if (!$permissiontoread) accessforbidden();
  *  Actions
 */
 
+$need_repair = 0;
 //Check if there is a security problem
 if (($perms & 0x0004) || ($perms & 0x0002) || !file_exists($installlock)) {
 	$need_repair = 1;
