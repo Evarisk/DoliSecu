@@ -49,11 +49,17 @@ ReadAdminPage = Accéder à la configuration du module DoliSecu
 #
 
 # Data - Donnée
-DoliSecuArea  = Bienvenue sur DoliSecu
-SecurityProblem = Problème de sécurité
-ProblemFix = Problème de sécurité réparé
+DoliSecuArea               = Bienvenue sur DoliSecu
+SecurityProblem            = Problème de sécurité
+ProblemFix                 = Problème de sécurité réparé
 ConfFileHasGoodPermissions = Le fichier conf.php a les bonnes permissions pour éviter des problèmes de sécurité.
-ConfFileSetPermissions = Les permissions du fichier conf.php ont été édités
-InstallLockFileCreated = Le fichier install.lock a été généré
-NoSecurityProblem = Il n'y a pas de problème de sécurité
-RepairSecurityProblem = Réparer les problèmes de sécurité
+ConfFileSetPermissions     = Les permissions du fichier conf.php ont été édités
+InstallLockFileCreated     = Le fichier install.lock a été généré
+NoSecurityProblem          = Il n'y a pas de problème de sécurité
+RepairSecurityProblem      = Réparer les problèmes de sécurité
+SetMyDolibarrInProd        = Définir mon Dolibarr en production
+SetMyDolibarrInDraft       = Définir mon Dolibarr en développement
+MyDolibarrIsInProd         = Mon Dolibarr est en production
+SuccessfullyChangeProdMod  = Le mode de production de Dolibarr a été changé
+CouldNotSetProd            = Une erreur est survenue lors de la tentative de changement de production
+FilePerms                  = Permissions du fichier

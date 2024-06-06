@@ -69,7 +69,7 @@ $perms       = fileperms($confPath);
 $installlock = DOL_DATA_ROOT.'/install.lock';
 
 // Security check
-$permissiontoread = $user->rights->dolisecu->lire;
+$permissiontoread = $user->rights->dolisecu->lire && $user->admin;
 if (empty($conf->dolisecu->enabled)) accessforbidden();
 if (!$permissiontoread) accessforbidden();
 
@@ -94,6 +94,36 @@ if ($action == 'check') {
 	}
     header('Location: ' . $_SERVER['PHP_SELF']);
     exit;
+}
+
+if ($action == 'toggle_prod') {
+	// Retrieve content of conf.php
+	$confContent = file_get_contents($confPath);
+	// Search for line $dolibarr_main_prod
+	$pattern     = '/\$dolibarr_main_prod\s*=\s*\'?\d+\'?\s*;/';
+
+	if ($dolibarr_main_prod == 0) {
+		$replacement = '$dolibarr_main_prod = 1;';
+	} else {
+		$replacement = '$dolibarr_main_prod = 0;';
+	}
+
+	// Replace content of conf.php with good value
+	$updateConfContent = preg_replace($pattern, $replacement, $confContent);
+
+	// Change perms to update file content
+	chmod($confPath, 0666);
+	$result = file_put_contents($confPath, $updateConfContent);
+	chmod($confPath, 0440);
+
+	if ($result > 0) {
+		setEventMessage($langs->trans('SuccessfullyChangeProdMod'));
+	} else {
+		setEventMessages($langs->trans('CouldNotSetProd'), [], 'errors');
+	}
+
+	header('Location:' . $_SERVER['PHP_SELF']);
+	exit;
 }
 
 /*
@@ -145,6 +175,23 @@ if ($need_repair) {
     print '<a class="butAction" id="actionButtonCheck" href="' . $_SERVER['PHP_SELF'] . '?action=check' . '">' . $langs->trans('RepairSecurityProblem') . '</a>';
 } else {
     print '<span class="butActionRefused classfortooltip" title="' . dol_escape_htmltag($langs->trans('NoSecurityProblem')) . '">' . $langs->trans('RepairSecurityProblem') . '</span>';
+}
+print '</div>';
+
+//Check if $dolibarr_main_prod is true
+print '<strong>$dolibarr_main_prod</strong>: '.($dolibarr_main_prod ? $dolibarr_main_prod : '0');
+if (empty($dolibarr_main_prod)) {
+	print img_picto('', 'warning').' '.$langs->trans("IfYouAreOnAProductionSetThis", 1);
+} else {
+	print ' ' . img_picto('', 'tick') . ' ' . $langs->trans('MyDolibarrIsInProd', $installlock);
+}
+
+print '<div class="tabsAction">';
+// Repair security problem
+if ($dolibarr_main_prod == 0) {
+	print '<a class="butAction" id="actionButtonCheck" href="' . $_SERVER['PHP_SELF'] . '?action=toggle_prod&token=' . newToken() . '">' . $langs->trans('SetMyDolibarrInProd') . '</a>';
+} else {
+	print '<a class="butAction" id="actionButtonCheck" href="' . $_SERVER['PHP_SELF'] . '?action=toggle_prod&token=' . newToken() . '">' . $langs->trans('SetMyDolibarrInDraft') . '</a>';
 }
 print '</div>';
 
