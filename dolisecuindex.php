@@ -68,7 +68,7 @@ $perms       = fileperms($dolibarr_main_document_root . '/' .$conffile);
 $installlock = DOL_DATA_ROOT.'/install.lock';
 
 // Security check
-$permissiontoread = $user->rights->dolisecu->lire;
+$permissiontoread = $user->rights->dolisecu->lire && $user->admin;
 if (empty($conf->dolisecu->enabled)) accessforbidden();
 if (!$permissiontoread) accessforbidden();
 
