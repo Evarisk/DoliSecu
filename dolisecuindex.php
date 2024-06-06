@@ -64,7 +64,8 @@ $langs->loadLangs(['dolisecu@dolisecu', 'admin', 'errors']);
 // Get parameters
 $action = GETPOST('action', 'aZ09');
 
-$perms       = fileperms($dolibarr_main_document_root . '/' .$conffile);
+$confPath    = $dolibarr_main_document_root . '/' .$conffile;
+$perms       = fileperms($confPath);
 $installlock = DOL_DATA_ROOT.'/install.lock';
 
 // Security check
@@ -84,7 +85,7 @@ if (($perms & 0x0004) || ($perms & 0x0002) || !file_exists($installlock)) {
 
 if ($action == 'check') {
 	if (($perms & 0x0004) || ($perms & 0x0002)) {
-		chmod($dolibarr_main_document_root . '/' . $conffile, 0444);
+		chmod($confPath, 0440);
 		setEventMessage($langs->trans('ConfFileSetPermissions'));
 	}
 	if (!file_exists($installlock)) {
@@ -114,9 +115,9 @@ if ($perms) {
 	if (($perms & 0x0004) || ($perms & 0x0002)) {
 		print img_warning() . ' ' .$langs->trans('ConfFileIsReadableOrWritableByAnyUsers');
 		// Web user group by default
-		$labeluser = dol_getwebuser('user');
+		$labeluser  = dol_getwebuser('user');
 		$labelgroup = dol_getwebuser('group');
-		print ' ' . $langs->trans('User') . ' : ' . $labeluser . ' : ' . $labelgroup;
+		($labeluser || $labelgroup ? print ' ' . $langs->trans('User') . ' : ' . $labeluser . ' : ' . $labelgroup : '');
 		if (function_exists('posix_geteuid') && function_exists('posix_getpwuid')) {
 			$arrayofinfoofuser = posix_getpwuid(posix_geteuid());
 			print ' <span class="opacitymedium">(POSIX ' . $arrayofinfoofuser['name'] . ' : ' . $arrayofinfoofuser['gecos'] . ' : ' . $arrayofinfoofuser['dir'] . ' : ' . $arrayofinfoofuser['shell'] . ')</span>';
@@ -124,6 +125,7 @@ if ($perms) {
 	} else {
 		print img_picto('', 'tick') . ' ' . $langs->trans('ConfFileHasGoodPermissions');
 	}
+	print '<br>' . $langs->trans('FilePerms') . ': ' . decoct($perms & 0x1FF);
 } else {
 	print img_warning() . ' ' . $langs->trans('FailedToReadFile', $conffile);
 }
