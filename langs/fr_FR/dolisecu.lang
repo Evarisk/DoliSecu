@@ -1,4 +1,4 @@
-# Copyright (C) 2022 EVARISK <dev@evarisk.com>
+# Copyright (C) 2022-2024 EVARISK <technique@evarisk.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,32 +17,28 @@
 # Générique
 #
 
-# Module label 'ModuleDoliSecuName'
-ModuleDoliSecuName = DoliSecu
-# Module description 'ModuleDoliSecuDesc'
-ModuleDoliSecuDesc = Corrigez vos problèmes de sécurité facilement et rapidement
+# Data - Donnée
+ModuleDoliSecuName      = DoliSecu
+ModuleDoliSecuDesc      = Corrigez vos problèmes de sécurité facilement et rapidement
+DoliSecuDescription     = Corrigez vos problèmes de sécurité facilement et rapidement
+DoliSecuDescriptionLong = Corrigez vos problèmes de sécurité facilement et rapidement
 
 #
-# Page d'administration
+# Config page - Page d'administration
 #
-DoliSecuSetup = Configuration du module DoliSecu
-Settings = Réglages
+
+# Setup - Réglages
+DoliSecuSetup     = Configuration du module DoliSecu
 DoliSecuSetupPage = Page de configuration du module DoliSecu
-
-#
-# Page À propos
-#
-About = À propos
-DoliSecuAbout = À propos de DoliSecu
 
 #
 # DoliSecu
 #
 
 # Right - Droit
-LireDoliSecu = Consulter DoliSecu
-ReadDoliSecu = Consulter DoliSecu (read)
-ReadAdminPage = Accéder à la configuration du module DoliSecu
+LireDoliSecu          = Consulter DoliSecu
+ReadDoliSecu          = Consulter DoliSecu (read)
+ReadAdminPageDoliSecu = Accéder à la configuration du module DoliSecu
 
 #
 # Index
