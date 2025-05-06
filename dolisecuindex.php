@@ -85,7 +85,12 @@ if (($perms & 0x0004) || ($perms & 0x0002) || !file_exists($installlock)) {
 
 if ($action == 'check') {
 	if (($perms & 0x0004) || ($perms & 0x0002)) {
-		chmod($confPath, 0440);
+		if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
+			chmod($confPath, 0400);
+		} else {
+			exec('icacls "' . $confPath . '" /inheritance:r /grant SYSTEM:R /grant Administrators:R /remove "Users"');
+			setEventMessage($langs->trans('YouAreRunningOnWindows'), 'warnings');
+		}
 		setEventMessage($langs->trans('ConfFileSetPermissions'));
 	}
 	if (!file_exists($installlock)) {
@@ -114,7 +119,7 @@ if ($action == 'toggle_prod') {
 	// Change perms to update file content
 	chmod($confPath, 0666);
 	$result = file_put_contents($confPath, $updateConfContent);
-	chmod($confPath, 0440);
+	chmod($confPath, 0400);
 
 	if ($result > 0) {
 		setEventMessage($langs->trans('SuccessfullyChangeProdMod'));
