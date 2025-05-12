@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2022-2024 EVARISK <technique@evarisk.com>
+/* Copyright (C) 2022-2025 EVARISK <technique@evarisk.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +23,11 @@
 
 // Load DoliSecu environment
 if (file_exists('../dolisecu.main.inc.php')) {
-    require_once __DIR__ . '/../dolisecu.main.inc.php';
+	require_once __DIR__ . '/../dolisecu.main.inc.php';
 } elseif (file_exists('../../dolisecu.main.inc.php')) {
-    require_once __DIR__ . '/../../dolisecu.main.inc.php';
+	require_once __DIR__ . '/../../dolisecu.main.inc.php';
 } else {
-    die('Include of dolisecu main fails');
+	die('Include of dolisecu main fails');
 }
 
 // Load Dolibarr libraries
@@ -49,7 +49,7 @@ $installlock = DOL_DATA_ROOT . '/install.lock';
 // Security check - Protection if external user
 $permissionToRead = $user->hasRight('dolisecu', 'adminpage', 'read') && $user->admin;
 if (isModEnabled('dolisecu') < 1 || !$permissionToRead) {
-    accessforbidden();
+	accessforbidden();
 }
 
 /*
@@ -64,7 +64,12 @@ if (($perms & 0x0004) || ($perms & 0x0002) || !file_exists($installlock)) {
 
 if ($action == 'check') {
 	if (($perms & 0x0004) || ($perms & 0x0002)) {
-		chmod($confPath, 0440);
+		if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
+			chmod($confPath, 0400);
+		} else {
+			exec('icacls "' . $confPath . '" /inheritance:r /grant SYSTEM:R /grant Administrators:R /remove "Users"');
+			setEventMessage($langs->trans('YouAreRunningOnWindows'), 'warnings');
+		}
 		setEventMessage($langs->trans('ConfFileSetPermissions'));
 	}
 	if (!file_exists($installlock)) {
@@ -93,7 +98,7 @@ if ($action == 'toggle_prod') {
 	// Change perms to update file content
 	chmod($confPath, 0666);
 	$result = file_put_contents($confPath, $updateConfContent);
-	chmod($confPath, 0440);
+	chmod($confPath, 0400);
 
 	if ($result > 0) {
 		setEventMessage($langs->trans('SuccessfullyChangeProdMod'));
