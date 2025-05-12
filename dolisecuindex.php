@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2022 EVARISK <dev@evarisk.com>
+/* Copyright (C) 2022-2025 EVARISK <technique@evarisk.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,44 +16,22 @@
  */
 
 /**
- *	\file       dolisecuindex.php
- *	\ingroup    dolisecu
- *	\brief      Home page of dolisecu top menu
+ * \file    dolisecuindex.php
+ * \ingroup dolisecu
+ * \brief   Home page of dolisecu top menu
  */
 
-// Load Dolibarr environment
-$res = 0;
-// Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
-if (!$res && !empty($_SERVER['CONTEXT_DOCUMENT_ROOT'])) {
-	$res = @include $_SERVER['CONTEXT_DOCUMENT_ROOT']. '/main.inc.php';
-}
-// Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
-$tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME']; $tmp2 = realpath(__FILE__); $i = strlen($tmp) - 1; $j = strlen($tmp2) - 1;
-while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
-	$i--; $j--;
-}
-if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1)). '/main.inc.php')) {
-	$res = @include substr($tmp, 0, ($i + 1)). '/main.inc.php';
-}
-if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1))). '/main.inc.php')) {
-	$res = @include dirname(substr($tmp, 0, ($i + 1))). '/main.inc.php';
-}
-// Try main.inc.php using relative path
-if (!$res && file_exists('../main.inc.php')) {
-	$res = @include '../main.inc.php';
-}
-if (!$res && file_exists('../../main.inc.php')) {
-	$res = @include '../../main.inc.php';
-}
-if (!$res && file_exists('../../../main.inc.php')) {
-	$res = @include '../../../main.inc.php';
-}
-if (!$res) {
-	die('Include of main fails');
+// Load DoliSecu environment
+if (file_exists('../dolisecu.main.inc.php')) {
+	require_once __DIR__ . '/../dolisecu.main.inc.php';
+} elseif (file_exists('../../dolisecu.main.inc.php')) {
+	require_once __DIR__ . '/../../dolisecu.main.inc.php';
+} else {
+	die('Include of dolisecu main fails');
 }
 
-// Libraries
-require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+// Load Dolibarr libraries
+require_once DOL_DOCUMENT_ROOT . '/core/lib/security2.lib.php';
 
 // Global variables definitions
 global $db, $langs, $user;
@@ -66,12 +44,13 @@ $action = GETPOST('action', 'aZ09');
 
 $confPath    = $dolibarr_main_document_root . '/' .$conffile;
 $perms       = fileperms($confPath);
-$installlock = DOL_DATA_ROOT.'/install.lock';
+$installlock = DOL_DATA_ROOT . '/install.lock';
 
-// Security check
-$permissiontoread = $user->rights->dolisecu->lire && $user->admin;
-if (empty($conf->dolisecu->enabled)) accessforbidden();
-if (!$permissiontoread) accessforbidden();
+// Security check - Protection if external user
+$permissionToRead = $user->hasRight('dolisecu', 'adminpage', 'read') && $user->admin;
+if (isModEnabled('dolisecu') < 1 || !$permissionToRead) {
+	accessforbidden();
+}
 
 /*
  *  Actions
@@ -85,7 +64,12 @@ if (($perms & 0x0004) || ($perms & 0x0002) || !file_exists($installlock)) {
 
 if ($action == 'check') {
 	if (($perms & 0x0004) || ($perms & 0x0002)) {
-		chmod($confPath, 0440);
+		if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
+			chmod($confPath, 0400);
+		} else {
+			exec('icacls "' . $confPath . '" /inheritance:r /grant SYSTEM:R /grant Administrators:R /remove "Users"');
+			setEventMessage($langs->trans('YouAreRunningOnWindows'), 'warnings');
+		}
 		setEventMessage($langs->trans('ConfFileSetPermissions'));
 	}
 	if (!file_exists($installlock)) {
@@ -114,7 +98,7 @@ if ($action == 'toggle_prod') {
 	// Change perms to update file content
 	chmod($confPath, 0666);
 	$result = file_put_contents($confPath, $updateConfContent);
-	chmod($confPath, 0440);
+	chmod($confPath, 0400);
 
 	if ($result > 0) {
 		setEventMessage($langs->trans('SuccessfullyChangeProdMod'));

@@ -63,3 +63,4 @@ MyDolibarrIsInProd         = Mon Dolibarr est en production
 SuccessfullyChangeProdMod  = Le mode de production de Dolibarr a été changé
 CouldNotSetProd            = Une erreur est survenue lors de la tentative de changement de production
 FilePerms                  = Permissions du fichier
+YouAreRunningOnWindows     = Votre serveur tourne sur Windows, les permissions ont été modifiés cependant vous devriez songer à migrer sur un serveur Unix/Linux.
