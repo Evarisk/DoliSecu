@@ -1,23 +1,29 @@
-# DoliSecu sur [DOLIBARR ERP CRM](https://www.dolibarr.org)
+# DoliSecu sur [DOLIBARR ERP CRM](https://dolibarr.org)
 
 ## Informations
 
 - Numéro du module : 436311
 - Version :  1.0.0
 - Dernière mise à jour : 21/11/2022
-- Éditeur : [Evarisk](https://www.evarisk.com)
+- Éditeur : [Evarisk](https://evarisk.com)
 - Compatibilité : Dolibarr 14.0.0 - 16.0.2
 - Thème : Eldy Menu
 - Licence : GPLv3
 - Disponible sur : Windows - MacOS - Linux
 
+### Version
+
+- Version : 1.0.0
+- PHP : 7.4.33
+- Compatibilité : Dolibarr 17.0. - 20.0.1
+
 ## Liens
 
-- Support & Assistance : [Forum www.dolibarr.fr](https://www.dolibarr.fr) / Par mail à contact@evarisk.com
-- Demo : [Demo DoliSecu](https://www.demodoli.digirisk.com) - ID: demo - Password: demo
+- Support & Assistance : [Forum dolibarr.fr](https://dolibarr.fr) / Par mail à technique@evarisk.com
+- Demo : [Demo DoliSecu](https://demodoli.digirisk.com) - ID: demo - Password: demo
 - Documentation : [Wiki DoliSecu](https://wiki.dolibarr.org/index.php/Module_DoliSecu)
-- Projet Github : [Projet DoliSecu](https://github.com/orgs/Evarisk/projects/16)
-- D'autres modules développés par Evarisk disponible sur [Dolistore.com](https://www.dolistore.com)
+- Projet Github : [Projet DoliSecu](https://github.com/Evarisk/DoliSecu/projects?query=is%3Aopen)
+- D'autres modules développés par Evarisk disponible sur [Dolistore.com](https://dolistore.com)
 
 ## Fonctionnalités
 
@@ -42,4 +48,3 @@ Corrigez vos problèmes de sécurité facilement et rapidement
 ``` 
 git clone https://github.com/Evarisk/dolisecu.git
 ```
-

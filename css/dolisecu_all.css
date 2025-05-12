@@ -1,7 +1,0 @@
-div.mainmenu.dolisecu {
-    background-image: none;
-}
-
-div.mainmenu.dolisecu::before {
-    content: "\f023";
-}
