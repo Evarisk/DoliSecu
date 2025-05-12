@@ -3,19 +3,17 @@
 ## Informations
 
 - Numéro du module : 436311
-- Version :  1.0.0
-- Dernière mise à jour : 21/11/2022
+- Dernière mise à jour : 19/05/2025
 - Éditeur : [Evarisk](https://evarisk.com)
-- Compatibilité : Dolibarr 14.0.0 - 16.0.2
 - Thème : Eldy Menu
 - Licence : GPLv3
 - Disponible sur : Windows - MacOS - Linux
 
 ### Version
 
-- Version : 1.0.0
+- Version : 21.0.0
 - PHP : 7.4.33
-- Compatibilité : Dolibarr 17.0. - 20.0.1
+- Compatibilité : Dolibarr 17.0 - 22.0
 
 ## Liens
 
@@ -27,7 +25,7 @@
 
 ## Fonctionnalités
 
-Corrigez vos problèmes de sécurité facilement et rapidement
+Corrigez vos problèmes de sécurité facilement et rapidement.
 
 ## Traductions
 
