@@ -22,10 +22,10 @@
  */
 
 // Load DoliSecu environment
-if (file_exists('../dolisecu.main.inc.php')) {
+if (file_exists('dolisecu.main.inc.php')) {
+	require_once __DIR__ . '/dolisecu.main.inc.php';
+} elseif (file_exists('../dolisecu.main.inc.php')) {
 	require_once __DIR__ . '/../dolisecu.main.inc.php';
-} elseif (file_exists('../../dolisecu.main.inc.php')) {
-	require_once __DIR__ . '/../../dolisecu.main.inc.php';
 } else {
 	die('Include of dolisecu main fails');
 }
