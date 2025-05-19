@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2022 EVARISK <dev@evarisk.com>
+/* Copyright (C) 2022-2024 EVARISK <technique@evarisk.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,24 +28,27 @@
  */
 function dolisecuAdminPrepareHead(): array
 {
-	global $langs, $conf;
+    // Global variables definitions
+    global $langs, $conf;
 
-	$langs->load('dolisecu@dolisecu');
+    // Load translation files required by the page
+    $langs->load('dolisecu@dolisecu');
 
-	$h = 0;
-	$head = [];
+    // Initialize values
+    $h = 0;
+    $head = [];
 
-    $head[$h][0] = dol_buildpath('/dolisecu/admin/setup.php', 1);
+    $head[$h][0] = dol_buildpath('dolisecu/admin/setup.php', 1);
     $head[$h][1] = '<i class="fas fa-cog pictofixedwidth"></i>' . $langs->trans('Settings');
     $head[$h][2] = 'settings';
     $h++;
 
-    $head[$h][0] = dol_buildpath('/dolisecu/admin/about.php', 1);
+    $head[$h][0] = dol_buildpath('dolisecu/admin/about.php', 1);
     $head[$h][1] = '<i class="fab fa-readme pictofixedwidth"></i>' . $langs->trans('About');
     $head[$h][2] = 'about';
     $h++;
 
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'dolisecu@dolisecu');
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'dolisecu@dolisecu');
 
-	return $head;
+    return $head;
 }
