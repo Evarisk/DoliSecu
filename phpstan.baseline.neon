@@ -1,0 +1,223 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Variable \$help_url might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: admin/about.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$boxes\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$config_page_url\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$conflictwith\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$const\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$const_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$cronjobs\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$db\.$#'
+			identifier: property.notFound
+			count: 3
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$depends\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$description\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$descriptionlong\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$dictionaries\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$dirs\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$editor_url\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$family\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$familyinfo\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$hidden\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$langfiles\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$max_dolibarr_version\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$menu\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$module_parts\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$module_position\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$need_dolibarr_version\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$phpmin\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$picto\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$requiredby\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$rights\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$rights_class\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$tabs\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$warnings_activation\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Access to an undefined property modDoliSecu\:\:\$warnings_activation_ext\.$#'
+			identifier: property.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Call to an undefined method modDoliSecu\:\:_init\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Call to an undefined method modDoliSecu\:\:_remove\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: core/modules/modDoliSecu.class.php
+
+		-
+			message: '#^Variable \$conffile might not be defined\.$#'
+			identifier: variable.undefined
+			count: 3
+			path: dolisecuindex.php
+
+		-
+			message: '#^Variable \$dolibarr_main_document_root might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: dolisecuindex.php
+
+		-
+			message: '#^Variable \$dolibarr_main_prod might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: dolisecuindex.php
