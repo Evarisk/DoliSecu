@@ -221,3 +221,8 @@ parameters:
 			identifier: variable.undefined
 			count: 2
 			path: dolisecuindex.php
+		-
+			message: '#^Property DolibarrModules\:\:\$menu \(1\|array\<array\{commentgroup\?\: string, mainmenu\: string, leftmenu\: string, langs\: string, enabled\: int\|string, target\: string, titre\: string, user\: int, \.\.\.\}\>\) does not accept non\-empty\-array\<array\{commentgroup\?\: string, mainmenu\: string, leftmenu\: string, langs\: string, enabled\: int\|string, target\: string, titre\: string, user\: int, \.\.\.\}\|array\{fk_menu\: ''fk_mainmenu\=dolisecu'', type\: ''top'', titre\: mixed, prefix\: ''\<i class\="fas fa…'', mainmenu\: ''dolisecu'', leftmenu\: '''', url\: ''/dolisecu…'', langs\: ''dolisecu@dolisecu'', \.\.\.\}\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: core/modules/modDoliSecu.class.php
