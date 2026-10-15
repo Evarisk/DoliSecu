@@ -11,9 +11,9 @@
 
 ### Version
 
-- Version : 21.0.0
+- Version : 23.0.0
 - PHP : 7.4.33
-- Compatibilité : Dolibarr 17.0 - 22.0
+- Compatibilité : Dolibarr 23.0 - 24.0
 
 ## Liens
 
