@@ -56,7 +56,7 @@ if (isModEnabled('dolisecu') < 1 || !$permissionToRead) {
 $title   = $langs->trans('DoliSecuSetup');
 $helpUrl = 'FR:Module_DoliSecu';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $helpUrl);
 
 // Subheader
 $linkBack = '<a href="' . DOL_URL_ROOT .'/admin/modules.php' . '">' . $langs->trans('BackToModuleList') . '</a>';
