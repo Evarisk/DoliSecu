@@ -111,7 +111,8 @@ class modDoliSecu extends DolibarrModules
             // Set this to relative path of js file if module must load a js on all pages
             'js' => [],
             // Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code). You can also set hook context to 'all'
-            // login : beforeLoginAuthentication impose le formulaire de connexion quand le captcha est actif
+            // login : beforeLoginAuthentication (blocage temporaire, formulaire impose avec le captcha),
+            // afterLoginFailed (enregistre l'echec), afterLogin (efface les echecs du compte)
             'hooks' => ['login'],
             // Set this to 1 if features of module are opened to external users
             'moduleforexternal' => 0,
@@ -157,7 +158,10 @@ class modDoliSecu extends DolibarrModules
             // CONST MODULE
             $i++ => ['DOLISECU_VERSION', 'chaine', $this->version, '', 0, 'current'],
             $i++ => ['DOLISECU_DB_VERSION', 'chaine', $this->version, '', 0, 'current'],
-            $i   => ['DOLISECU_SHOW_PATCH_NOTE', 'integer', 1, '', 0, 'current'],
+            $i++ => ['DOLISECU_SHOW_PATCH_NOTE', 'integer', 1, '', 0, 'current'],
+            // Login lock: read before login, when the entity is not known yet, hence all entities.
+            $i++ => ['DOLISECU_LOGIN_MAX_ATTEMPTS', 'integer', 5, 'Failed logins allowed per login before a temporary lock (0 = no lock)', 0, 'allentities'],
+            $i   => ['DOLISECU_LOGIN_LOCK_MINUTES', 'integer', 15, 'Duration of the lock after too many failed logins', 0, 'allentities'],
         ];
 
         if (!isset($conf->dolisecu) || !isset($conf->dolisecu->enabled)) {
@@ -237,6 +241,11 @@ class modDoliSecu extends DolibarrModules
 
         // Permissions
         $this->remove($options);
+
+        $result = $this->_load_tables('/dolisecu/sql/');
+        if ($result < 0) {
+            return 0;
+        }
 
         $sql = [];
 

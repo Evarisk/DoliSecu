@@ -62,11 +62,7 @@ class ActionsDolisecu
     }
 
     /**
-     * Refuse a login attempt that does not come from the login form when the captcha is enabled
-     *
-     * The captcha is only checked for the regular login form: action « login » with the username posted.
-     * Any other attempt carrying a username is refused here, with the same message, log and trigger as
-     * a wrong captcha, so that the captcha cannot be skipped.
+     * Checks run before Dolibarr tries the credentials: temporary lock, then captcha enforcement
      *
      * @param  array<string,mixed> $parameters Hook metadata (context, etc...)
      * @param  object|null         $object     Current user
@@ -76,15 +72,139 @@ class ActionsDolisecu
      */
     public function beforeLoginAuthentication(array $parameters, $object, string &$action, HookManager $hookmanager): int
     {
-        global $langs, $user;
-
-        if (!getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA') || isset($_SESSION['dol_bypass_antispam'])) {
-            return 0;
-        }
-
         // No username received: this is not a login attempt (e.g. display of the login page).
         $username = GETPOST('username', 'alpha', 3);
         if ($username === '') {
+            return 0;
+        }
+
+        if ($this->refuseIfLocked($username) < 0) {
+            return -1;
+        }
+
+        return $this->refuseOutsideLoginForm($username);
+    }
+
+    /**
+     * Record a failed login attempt (wrong credentials, wrong captcha...)
+     *
+     * @param  array<string,mixed> $parameters Hook metadata (context, etc...)
+     * @param  object|null         $object     Current user
+     * @param  string              $action     Current action
+     * @param  HookManager         $hookmanager Hook manager
+     * @return int                             0
+     */
+    public function afterLoginFailed(array $parameters, $object, string &$action, HookManager $hookmanager): int
+    {
+        $username = GETPOST('username', 'alpha', 3);
+        if ($username === '' || getDolGlobalInt('DOLISECU_LOGIN_MAX_ATTEMPTS') <= 0) {
+            return 0;
+        }
+
+        $now   = dol_now();
+        $table = MAIN_DB_PREFIX . 'dolisecu_login_attempt';
+
+        // Purge what no longer counts, so that the table stays small.
+        $this->db->query('DELETE FROM ' . $table . " WHERE datec < '" . $this->db->idate($now - $this->lockSeconds()) . "'");
+
+        $sql  = 'INSERT INTO ' . $table . ' (login, ip, datec) VALUES (';
+        $sql .= "'" . $this->db->escape(dol_trunc($username, 128, 'right', 'UTF-8', 1)) . "', ";
+        $sql .= "'" . $this->db->escape(dol_trunc(getUserRemoteIP(), 250, 'right', 'UTF-8', 1)) . "', ";
+        $sql .= "'" . $this->db->idate($now) . "')";
+        if (!$this->db->query($sql)) {
+            dol_syslog(__METHOD__ . ' ' . $this->db->lasterror(), LOG_ERR);
+        }
+
+        return 0;
+    }
+
+    /**
+     * Clear the failed attempts of a login once it succeeds, so that a typo is not held against the user
+     *
+     * @param  array<string,mixed> $parameters Hook metadata (context, etc...)
+     * @param  object|null         $object     Logged user
+     * @param  string              $action     Current action
+     * @param  HookManager         $hookmanager Hook manager
+     * @return int                             0
+     */
+    public function afterLogin(array $parameters, $object, string &$action, HookManager $hookmanager): int
+    {
+        $username = GETPOST('username', 'alpha', 3);
+        if ($username !== '') {
+            $this->db->query('DELETE FROM ' . MAIN_DB_PREFIX . "dolisecu_login_attempt WHERE login = '" . $this->db->escape($username) . "'");
+        }
+
+        return 0;
+    }
+
+    /**
+     * Duration of the lock, in seconds
+     *
+     * @return int
+     */
+    private function lockSeconds(): int
+    {
+        return max(1, getDolGlobalInt('DOLISECU_LOGIN_LOCK_MINUTES', 15)) * 60;
+    }
+
+    /**
+     * Refuse the attempt while the login, or the IP, has too many recent failures
+     *
+     * The IP threshold is four times the login one: an office IP is shared, a colleague's typos must
+     * not lock everybody, while a password spray from one address is still stopped.
+     *
+     * @param  string $username Login received
+     * @return int              0 to go on, -1 if locked
+     */
+    private function refuseIfLocked(string $username): int
+    {
+        global $langs;
+
+        $max = getDolGlobalInt('DOLISECU_LOGIN_MAX_ATTEMPTS');
+        if ($max <= 0) {
+            return 0;
+        }
+
+        $since = $this->db->idate(dol_now() - $this->lockSeconds());
+        $table = MAIN_DB_PREFIX . 'dolisecu_login_attempt';
+        $checks = [
+            "login = '" . $this->db->escape($username) . "'" => $max,
+            "ip = '" . $this->db->escape(getUserRemoteIP()) . "'" => $max * 4,
+        ];
+
+        foreach ($checks as $where => $threshold) {
+            $resql = $this->db->query('SELECT COUNT(*) AS nb, MAX(datec) AS last FROM ' . $table . ' WHERE ' . $where . " AND datec >= '" . $since . "'");
+            $obj   = $resql ? $this->db->fetch_object($resql) : null;
+            if (empty($obj) || (int) $obj->nb < $threshold) {
+                continue;
+            }
+
+            $minutes = max(1, (int) ceil(($this->db->jdate($obj->last) + $this->lockSeconds() - dol_now()) / 60));
+            dol_syslog('--- Security warning: too many failed logins (' . $where . '), connection refused for ' . $minutes . ' min', LOG_NOTICE);
+            $langs->loadLangs(['main', 'dolisecu@dolisecu']);
+            $_SESSION['dol_loginmesg'] = $langs->transnoentitiesnoconv('DoliSecuTooManyLoginAttempts', $minutes);
+            $this->errors[] = 'DoliSecuTooManyLoginAttempts';
+            return -1;
+        }
+
+        return 0;
+    }
+
+    /**
+     * Refuse a login attempt that does not come from the login form when the captcha is enabled
+     *
+     * The captcha is only checked for the regular login form: action « login » with the username posted.
+     * Any other attempt carrying a username is refused here, with the same message, log and trigger as
+     * a wrong captcha, so that the captcha cannot be skipped.
+     *
+     * @param  string $username Login received
+     * @return int              0 to go on, -1 to refuse the login attempt
+     */
+    private function refuseOutsideLoginForm(string $username): int
+    {
+        global $langs, $user;
+
+        if (!getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA') || isset($_SESSION['dol_bypass_antispam'])) {
             return 0;
         }
 
