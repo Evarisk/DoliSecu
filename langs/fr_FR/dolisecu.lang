@@ -31,6 +31,13 @@ DoliSecuDescriptionLong = Corrigez vos problèmes de sécurité facilement et ra
 DoliSecuSetup     = Configuration du module DoliSecu
 DoliSecuSetupPage = Page de configuration du module DoliSecu
 
+# Login lock - Verrouillage de la connexion
+DoliSecuLoginLock            = Verrouillage après des échecs de connexion
+DoliSecuLoginMaxAttempts     = Nombre d'échecs de connexion autorisés par compte (0 = pas de verrouillage)
+DoliSecuLoginMaxAttemptsHelp = Une même adresse IP a droit à quatre fois plus d'échecs, pour qu'un bureau partageant une adresse ne soit pas bloqué par les erreurs d'une seule personne.
+DoliSecuLoginLockMinutes     = Durée du verrouillage, en minutes
+DoliSecuTooManyLoginAttempts = Trop de tentatives de connexion échouées. Réessayez dans %s minute(s).
+
 #
 # DoliSecu
 #
