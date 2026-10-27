@@ -38,6 +38,13 @@ DoliSecuLoginMaxAttemptsHelp = Une même adresse IP a droit à quatre fois plus 
 DoliSecuLoginLockMinutes     = Durée du verrouillage, en minutes
 DoliSecuTooManyLoginAttempts = Trop de tentatives de connexion échouées. Réessayez dans %s minute(s).
 
+# URL login - Connexion par identifiants dans l'URL
+DoliSecuUrlLogin                  = Connexion par identifiants dans l'URL
+DoliSecuUrlLoginDesc              = Autorise certains comptes à se connecter via un lien du type index.php?username=...&password=... même lorsque le captcha est activé. Le captcha et le verrouillage anti-brute-force restent exigés pour tous les autres comptes.
+DoliSecuUrlLoginAllowedLogins     = Utilisateurs autorisés à se connecter par URL
+DoliSecuUrlLoginAllowedLoginsHelp = Pour ces comptes uniquement, le captcha n'est pas exigé lors d'une connexion par identifiants dans l'URL. Le verrouillage anti-brute-force continue de s'appliquer. À réserver aux comptes de démonstration : le mot de passe transite en clair dans l'URL (historique du navigateur, journaux serveur). Laisser vide pour n'autoriser personne.
+DoliSecuUrlLoginPostMethodWarning = La constante MAIN_AUTHENTICATION_POST_METHOD vaut 2 dans conf.php : le cœur de Dolibarr ignore les identifiants passés dans l'URL avant même ce réglage. La liste blanche restera sans effet tant que cette constante n'est pas retirée (ou remise à 3).
+
 #
 # DoliSecu
 #

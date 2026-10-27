@@ -161,7 +161,9 @@ class modDoliSecu extends DolibarrModules
             $i++ => ['DOLISECU_SHOW_PATCH_NOTE', 'integer', 1, '', 0, 'current'],
             // Login lock: read before login, when the entity is not known yet, hence all entities.
             $i++ => ['DOLISECU_LOGIN_MAX_ATTEMPTS', 'integer', 5, 'Failed logins allowed per login before a temporary lock (0 = no lock)', 0, 'allentities'],
-            $i   => ['DOLISECU_LOGIN_LOCK_MINUTES', 'integer', 15, 'Duration of the lock after too many failed logins', 0, 'allentities'],
+            $i++ => ['DOLISECU_LOGIN_LOCK_MINUTES', 'integer', 15, 'Duration of the lock after too many failed logins', 0, 'allentities'],
+            // URL login allowlist: read before login, when the entity is not known yet, hence all entities. Empty = nobody allowed.
+            $i   => ['DOLISECU_URL_LOGIN_ALLOWED_LOGINS', 'chaine', '', 'Logins allowed to authenticate via URL parameters even when captcha is on (comma separated)', 0, 'allentities'],
         ];
 
         if (!isset($conf->dolisecu) || !isset($conf->dolisecu->enabled)) {
