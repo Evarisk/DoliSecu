@@ -197,6 +197,10 @@ class ActionsDolisecu
      * Any other attempt carrying a username is refused here, with the same message, log and trigger as
      * a wrong captcha, so that the captcha cannot be skipped.
      *
+     * Exception: a login listed in DOLISECU_URL_LOGIN_ALLOWED_LOGINS keeps the right to authenticate
+     * from the URL (e.g. demo accounts), the captcha being skipped for it alone. The brute-force lock
+     * checked before this method still applies to it.
+     *
      * @param  string $username Login received
      * @return int              0 to go on, -1 to refuse the login attempt
      */
@@ -205,6 +209,13 @@ class ActionsDolisecu
         global $langs, $user;
 
         if (!getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA') || isset($_SESSION['dol_bypass_antispam'])) {
+            return 0;
+        }
+
+        // Allowlist: some logins (e.g. demo accounts) may still authenticate from the URL, the captcha
+        // being skipped for them alone. Compared lowercase, as Dolibarr authenticates the login case-insensitively.
+        $allowedLogins = array_filter(array_map('trim', explode(',', getDolGlobalString('DOLISECU_URL_LOGIN_ALLOWED_LOGINS'))));
+        if (!empty($allowedLogins) && in_array(strtolower($username), array_map('strtolower', $allowedLogins), true)) {
             return 0;
         }
 
