@@ -62,6 +62,18 @@ if ($action == 'update_login_lock') {
     header('Location: ' . $_SERVER['PHP_SELF']);
     exit;
 }
+if ($action == 'update_url_login') {
+    // Security-wide setting: administrators only.
+    if (!$user->admin) {
+        accessforbidden();
+    }
+    // Read before login, when the entity is not known yet: stored for all entities, as logins.
+    $allowedLogins = array_values(array_unique(array_filter(array_map('trim', GETPOST('DOLISECU_URL_LOGIN_ALLOWED_LOGINS', 'array')))));
+    dolibarr_set_const($db, 'DOLISECU_URL_LOGIN_ALLOWED_LOGINS', implode(',', $allowedLogins), 'chaine', 0, '', 0);
+    setEventMessages($langs->trans('SetupSaved'), null);
+    header('Location: ' . $_SERVER['PHP_SELF']);
+    exit;
+}
 
 /*
  * View
@@ -95,6 +107,45 @@ print '<tr class="oddeven"><td>' . $form->textwithpicto($langs->trans('DoliSecuL
 print '<td><input type="number" min="0" class="maxwidth75" name="DOLISECU_LOGIN_MAX_ATTEMPTS" value="' . getDolGlobalInt('DOLISECU_LOGIN_MAX_ATTEMPTS') . '"></td></tr>';
 print '<tr class="oddeven"><td>' . $langs->trans('DoliSecuLoginLockMinutes') . '</td>';
 print '<td><input type="number" min="1" class="maxwidth75" name="DOLISECU_LOGIN_LOCK_MINUTES" value="' . getDolGlobalInt('DOLISECU_LOGIN_LOCK_MINUTES', 15) . '"></td></tr>';
+print '</table>';
+print '<div class="center"><input type="submit" class="button button-save" value="' . $langs->trans('Save') . '"></div>';
+print '</form>';
+
+// URL login allowlist
+print load_fiche_titre($langs->trans('DoliSecuUrlLogin'), '', '');
+print '<span class="opacitymedium">' . $langs->trans('DoliSecuUrlLoginDesc') . '</span><br>';
+if (defined('MAIN_AUTHENTICATION_POST_METHOD') && constant('MAIN_AUTHENTICATION_POST_METHOD') == 2) {
+    print '<div class="warning">' . img_warning() . ' ' . $langs->trans('DoliSecuUrlLoginPostMethodWarning') . '</div>';
+}
+
+// Active users, keyed by login: the login is what the setting stores and what the hook compares at login time.
+$userLogins = [];
+$sql  = 'SELECT login, firstname, lastname FROM ' . MAIN_DB_PREFIX . 'user';
+$sql .= ' WHERE entity IN (' . getEntity('user') . ')';
+$sql .= " AND statut = 1 AND login <> ''";
+$sql .= ' ORDER BY login';
+$resql = $db->query($sql);
+if ($resql) {
+    while ($obj = $db->fetch_object($resql)) {
+        $fullname = trim($obj->firstname . ' ' . $obj->lastname);
+        $userLogins[$obj->login] = ($fullname !== '' ? $fullname . ' (' . $obj->login . ')' : $obj->login);
+    }
+}
+$selectedLogins = array_filter(array_map('trim', explode(',', getDolGlobalString('DOLISECU_URL_LOGIN_ALLOWED_LOGINS'))));
+// Keep an already allowed login that no longer matches an active user, so saving does not silently drop it.
+foreach ($selectedLogins as $login) {
+    if (!isset($userLogins[$login])) {
+        $userLogins[$login] = $login;
+    }
+}
+
+print '<form method="POST" action="' . $_SERVER['PHP_SELF'] . '">';
+print '<input type="hidden" name="token" value="' . newToken() . '">';
+print '<input type="hidden" name="action" value="update_url_login">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre"><td>' . $langs->trans('Parameter') . '</td><td>' . $langs->trans('Value') . '</td></tr>';
+print '<tr class="oddeven"><td>' . $form->textwithpicto($langs->trans('DoliSecuUrlLoginAllowedLogins'), $langs->trans('DoliSecuUrlLoginAllowedLoginsHelp')) . '</td>';
+print '<td>' . $form->multiselectarray('DOLISECU_URL_LOGIN_ALLOWED_LOGINS', $userLogins, $selectedLogins, 0, 0, 'minwidth400') . '</td></tr>';
 print '</table>';
 print '<div class="center"><input type="submit" class="button button-save" value="' . $langs->trans('Save') . '"></div>';
 print '</form>';
