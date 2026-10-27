@@ -17,7 +17,5 @@
 /.project
 # Other
 *.back
-/.editorconfig
-/.gitattributes
 # PHPStan cache
 /.github/tmp/phpstan
